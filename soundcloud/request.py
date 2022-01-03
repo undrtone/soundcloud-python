@@ -107,6 +107,18 @@ def make_request(method, url, params):
             'User-Agent': soundcloud.USER_AGENT
         }
     }
+
+    # The following authentication updates were required from September 2021 onwards:
+    #   1. Pass access_token via Authorization header
+    #   2. Remove access_token and client_id parameters
+    if 'oauth_token' in params:
+        kwargs['headers']['Authorization'] = 'OAuth %s' % (params['oauth_token'])
+        del params['oauth_token']
+    if 'access_token' in params:
+        del params['access_token']
+    if 'client_id' in params:
+        del params['client_id']
+
     # options, not params
     if 'verify_ssl' in params:
         if params['verify_ssl'] is False:
